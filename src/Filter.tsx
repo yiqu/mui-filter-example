@@ -2,7 +2,7 @@ import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLa
 import CloseIcon from '@mui/icons-material/Close';
 import { EP_OPTIONS, PRODUCER_OPTIONS } from './App';
 import SendIcon from '@mui/icons-material/FilterList';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 
 
 export interface AdvancedFilterProps {
@@ -11,14 +11,14 @@ export interface AdvancedFilterProps {
 }
 
 export interface FilterValue {
-  producers: {
+  producer: {
     [key: string]: boolean
   },
-  eps: {
+  episode_id: {
     [key: string]: boolean
   },
-  crawlText: string,
-  titleText: string
+  opening_crawl: string,
+  title: string
 }
 
 function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
@@ -35,7 +35,7 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
       ...filters
     };
 
-    if (filterKey === 'crawlText' || filterKey === 'titleText') {
+    if (filterKey === 'opening_crawl' || filterKey === 'title') {
       val = {
         ...filters,
         [filterKey]: event.target.value
@@ -63,12 +63,12 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
           <InputLabel>Title</InputLabel>
           <Input
             type='text'
-            value={ filters.titleText }
-            onChange={ handleFilterChange('titleText') }
+            value={ filters.title }
+            onChange={ handleFilterChange('title') }
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
-                  onClick={ clearFilterForText('titleText') }
+                  onClick={ clearFilterForText('title') }
                 >
                   <CloseIcon />
                 </IconButton>
@@ -87,14 +87,14 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
             <Stack direction="row" justifyContent="start" alignItems="start" width="100%" p={ 3 }>
               <FormControl sx={ { m: 3 } } component="fieldset" variant="standard">
                 <FormLabel component="legend" 
-                  sx={ {display: 'flex', justifyContent:"start", alignItems:"start", width:'100%'} } >Producers</FormLabel>
+                  sx={ {display: 'flex', justifyContent:"start", alignItems:"start", width:'100%'} } >producer</FormLabel>
                 <FormGroup>
                   {
                     PRODUCER_OPTIONS.map((producerOption) => {
                       return (
                         <FormControlLabel key={ producerOption }
                           control={
-                            <Checkbox checked={ filters.producers[producerOption] } onChange={ handleFilterChange('producers') } name={ producerOption } />
+                            <Checkbox checked={ filters.producer[producerOption] } onChange={ handleFilterChange('producer') } name={ producerOption } />
                           }
                           label={ producerOption }
                         />
@@ -113,7 +113,7 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
                       return (
                         <FormControlLabel key={ epOption }
                           control={
-                            <Checkbox checked={ filters.eps[epOption] } onChange={ handleFilterChange('eps') } name={ epOption } />
+                            <Checkbox checked={ filters.episode_id[epOption] } onChange={ handleFilterChange('episode_id') } name={ epOption } />
                           }
                           label={ epOption }
                         />
@@ -127,12 +127,12 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
                 <InputLabel>Crawl Text</InputLabel>
                 <Input
                   type='text'
-                  value={ filters.crawlText }
-                  onChange={ handleFilterChange('crawlText') }
+                  value={ filters.opening_crawl }
+                  onChange={ handleFilterChange('opening_crawl') }
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={ clearFilterForText('crawlText') }
+                        onClick={ clearFilterForText('opening_crawl') }
                       >
                         <CloseIcon />
                       </IconButton>
@@ -152,4 +152,4 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
   );
 }
 
-export default AdvancedFilter;
+export default memo(AdvancedFilter);
