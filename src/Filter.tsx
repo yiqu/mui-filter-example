@@ -1,5 +1,6 @@
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, Input, InputAdornment, InputLabel, Stack } from '@mui/material';
+import { Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, Input, InputAdornment, InputLabel, Stack } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { EP_OPTIONS, PRODUCER_OPTIONS } from './App';
 import SendIcon from '@mui/icons-material/FilterList';
 import { memo, useState } from 'react';
@@ -52,6 +53,26 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
     onFilterChange(val);
   };
 
+  const handleResetFilter = () => {
+    onFilterChange({
+      opening_crawl: '',
+      title: '',
+      episode_id: {
+        [EP_OPTIONS[0]]: true,
+        [EP_OPTIONS[1]]: true,
+        [EP_OPTIONS[2]]: true,
+        [EP_OPTIONS[3]]: true,
+        [EP_OPTIONS[4]]: true,
+        [EP_OPTIONS[5]]: true,
+      },
+      producer: {
+        [PRODUCER_OPTIONS[0]]: true,
+        [PRODUCER_OPTIONS[1]]: true,
+        [PRODUCER_OPTIONS[2]]: true,
+      }
+    });
+  };
+
   const clearFilterForText = (filterKey: string) => (e: any) => {
   };
 
@@ -84,71 +105,78 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
       {
         filterOpen && (
           <Box width="100%" border="1px solid #ccc" mt={ 3 }>
-            <Stack direction="row" justifyContent="start" alignItems="start" width="100%" p={ 3 }>
-              <FormControl sx={ { m: 3 } } component="fieldset" variant="standard">
-                <FormLabel component="legend" 
-                  sx={ {display: 'flex', justifyContent:"start", alignItems:"start", width:'100%'} } >producer</FormLabel>
-                <FormGroup>
-                  {
-                    PRODUCER_OPTIONS.map((producerOption) => {
-                      return (
-                        <FormControlLabel key={ producerOption }
-                          control={
-                            <Checkbox checked={ filters.producer[producerOption] } onChange={ handleFilterChange('producer') } name={ producerOption } />
-                          }
-                          label={ producerOption }
-                        />
-                      );
-                    })
-                  }
-                </FormGroup>
-              </FormControl>
+            <Stack direction="column" justifyContent="start" alignContent="start" p={ 1 }>
+              <Stack direction="row" justifyContent="start" alignItems="start" width="100%" >
+                <FormControl sx={ { m: 3 } } component="fieldset" variant="standard">
+                  <FormLabel component="legend" 
+                    sx={ {display: 'flex', justifyContent:"start", alignItems:"start", width:'100%'} } >
+                    Producer
+                  </FormLabel>
+                  <FormGroup>
+                    {
+                      PRODUCER_OPTIONS.map((producerOption) => {
+                        return (
+                          <FormControlLabel key={ producerOption }
+                            control={
+                              <Checkbox checked={ filters.producer[producerOption] } onChange={ handleFilterChange('producer') } name={ producerOption } />
+                            }
+                            label={ producerOption }
+                          />
+                        );
+                      })
+                    }
+                  </FormGroup>
+                </FormControl>
 
-              <FormControl sx={ { m: 3 } } component="fieldset" variant="standard">
-                <FormLabel component="legend" 
+                <FormControl sx={ { m: 3 } } component="fieldset" variant="standard">
+                  <FormLabel component="legend" 
                   sx={ {display: 'flex', justifyContent:"start", alignItems:"start", width:'100%'} } >Ep.</FormLabel>
-                <FormGroup>
-                  {
-                    EP_OPTIONS.map((epOption) => {
-                      return (
-                        <FormControlLabel key={ epOption }
-                          control={
-                            <Checkbox checked={ filters.episode_id[epOption] } onChange={ handleFilterChange('episode_id') } name={ epOption } />
-                          }
-                          label={ epOption }
-                        />
-                      );
-                    })
-                  }
-                </FormGroup>
-              </FormControl>
+                  <FormGroup>
+                    {
+                      EP_OPTIONS.map((epOption) => {
+                        return (
+                          <FormControlLabel key={ epOption }
+                            control={
+                              <Checkbox checked={ filters.episode_id[epOption] } onChange={ handleFilterChange('episode_id') } name={ epOption } />
+                            }
+                            label={ epOption }
+                          />
+                        );
+                      })
+                    }
+                  </FormGroup>
+                </FormControl>
 
-              <FormControl variant="standard">
-                <InputLabel>Crawl Text</InputLabel>
-                <Input
-                  type='text'
-                  value={ filters.opening_crawl }
-                  onChange={ handleFilterChange('opening_crawl') }
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={ clearFilterForText('opening_crawl') }
-                      >
-                        <CloseIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-
+                <FormControl variant="standard">
+                  <InputLabel>Filter Crawl Text</InputLabel>
+                  <Input
+                    type='text'
+                    value={ filters.opening_crawl }
+                    onChange={ handleFilterChange('opening_crawl') }
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={ clearFilterForText('opening_crawl') }
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              
+                <Divider />
+              </Stack>
+              <Divider />
+              <Stack direction="row" justifyContent="end" alignItems="start" mt={ 1 }>
+                <Button endIcon={ <RestartAltIcon /> } onClick={ handleResetFilter }>Reset</Button>
+                <Button endIcon={ <CloseIcon /> } onClick={ () => setFilterOpen(false) }>Close</Button>
+              </Stack>
             </Stack>
           </Box>
         )
       }
-      
-
     </Stack>
-    
   );
 }
 
