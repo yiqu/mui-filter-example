@@ -23,7 +23,7 @@ export interface FilterValue {
 }
 
 function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
-  const [filterOpen, setFilterOpen] = useState<boolean>(true);
+  const [filterOpen, setFilterOpen] = useState<boolean>(false);
   
   const handleOpenAdvancedFilters = () => {
     setFilterOpen((current) => {
@@ -74,6 +74,10 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
   };
 
   const clearFilterForText = (filterKey: string) => (e: any) => {
+    onFilterChange({
+      ...filters,
+      [filterKey]: ''
+    });
   };
 
   return (
@@ -98,7 +102,7 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
           />
         </FormControl>
         <Button variant="contained" endIcon={ <SendIcon /> } onClick={ handleOpenAdvancedFilters }>
-          Open Advanced Filter
+          Advanced Filter
         </Button>
       </Stack>
       
