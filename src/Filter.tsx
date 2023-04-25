@@ -1,11 +1,31 @@
-import { Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, Input, InputAdornment, InputLabel, Stack } from '@mui/material';
+import { Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, Input, InputAdornment, InputLabel, Stack, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import { EP_OPTIONS, PRODUCER_OPTIONS } from './App';
 import SendIcon from '@mui/icons-material/FilterList';
 import { memo, useState } from 'react';
+import { getDefaultFilters } from './App';
 
+export const PRODUCER_OPTIONS = ["Gary Kurtz, Rick McCallum", "Howard G. Kazanjian, George Lucas, Rick McCallum", "Rick McCallum"];
+export const EP_OPTIONS = ["1", "2", "3", "4", "5", "6"];
 
+const getToggleableFiltersByChecked = (filterKey: string, checked: boolean) => {
+  let obj: any = {};
+  if (filterKey === 'producer') {
+    PRODUCER_OPTIONS.forEach((res) => {
+      obj[res] = checked;
+    });
+  } else if (filterKey === 'episode_id') {
+    EP_OPTIONS.forEach((res) => {
+      obj[res] = checked;
+    });
+  }
+  return obj;
+};
+
+const allProducersChecked = JSON.stringify(getToggleableFiltersByChecked('producer', true));
+const allProducersUnchecked = JSON.stringify(getToggleableFiltersByChecked('producer', false));
+const allEpsChecked = JSON.stringify(getToggleableFiltersByChecked('episode_id', true));
+const allEpsUnchecked = JSON.stringify(getToggleableFiltersByChecked('episode_id', false));
 export interface AdvancedFilterProps {
   onFilterChange: (filterObj: FilterValue) => void;
   filters: FilterValue;
@@ -23,8 +43,13 @@ export interface FilterValue {
 }
 
 function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
-  const [filterOpen, setFilterOpen] = useState<boolean>(false);
-  
+  const [filterOpen, setFilterOpen] = useState<boolean>(import.meta.env.VITE_FILTER_OPEN_ON_START);
+  const isProducerOverallChecked: boolean = JSON.stringify(filters.producer) === allProducersChecked;
+  const isProducerIndeterminate: boolean = JSON.stringify(filters.producer) !== allProducersChecked && JSON.stringify(filters.producer) !== allProducersUnchecked;
+
+  const isEpsOverallChecked: boolean = JSON.stringify(filters.episode_id) === allEpsChecked;
+  const isEpsIndeterminate: boolean = JSON.stringify(filters.episode_id) !== allEpsChecked && JSON.stringify(filters.episode_id) !== allEpsUnchecked;
+
   const handleOpenAdvancedFilters = () => {
     setFilterOpen((current) => {
       return !current;
@@ -54,23 +79,7 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
   };
 
   const handleResetFilter = () => {
-    onFilterChange({
-      opening_crawl: '',
-      title: '',
-      episode_id: {
-        [EP_OPTIONS[0]]: true,
-        [EP_OPTIONS[1]]: true,
-        [EP_OPTIONS[2]]: true,
-        [EP_OPTIONS[3]]: true,
-        [EP_OPTIONS[4]]: true,
-        [EP_OPTIONS[5]]: true,
-      },
-      producer: {
-        [PRODUCER_OPTIONS[0]]: true,
-        [PRODUCER_OPTIONS[1]]: true,
-        [PRODUCER_OPTIONS[2]]: true,
-      }
-    });
+    onFilterChange(getDefaultFilters());
   };
 
   const clearFilterForText = (filterKey: string) => (e: any) => {
@@ -79,6 +88,14 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
       [filterKey]: ''
     });
   };
+
+  const handleMultiFilterToggle = (filterKey: string) =>  (event: React.ChangeEvent<HTMLInputElement>) => {
+    onFilterChange({
+      ...filters,
+      [filterKey]: getToggleableFiltersByChecked(filterKey, event.target.checked)
+    });
+  };
+ 
 
   return (
     <Stack direction="column" justifyContent="center" alignItems="center" >
@@ -114,7 +131,19 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
                 <FormControl sx={ { m: 3 } } component="fieldset" variant="standard">
                   <FormLabel component="legend" 
                     sx={ {display: 'flex', justifyContent:"start", alignItems:"start", width:'100%'} } >
-                    Producer
+                    <Stack direction="row" justifyContent="start" alignItems="center">
+                      <Typography mr={ 1 }>Producer</Typography>
+                      <FormControlLabel
+                        label=""
+                        control={
+                          <Checkbox
+                            checked={ isProducerOverallChecked }
+                            indeterminate={ isProducerIndeterminate }
+                            onChange={ handleMultiFilterToggle('producer') }
+                          />
+                        }
+                      />
+                    </Stack>
                   </FormLabel>
                   <FormGroup>
                     {
@@ -134,7 +163,21 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
 
                 <FormControl sx={ { m: 3 } } component="fieldset" variant="standard">
                   <FormLabel component="legend" 
-                  sx={ {display: 'flex', justifyContent:"start", alignItems:"start", width:'100%'} } >Ep.</FormLabel>
+                  sx={ {display: 'flex', justifyContent:"start", alignItems:"start", width:'100%'} } >
+                    <Stack direction="row" justifyContent="start" alignItems="center">
+                      <Typography mr={ 1 }>Ep.</Typography>
+                      <FormControlLabel
+                        label=""
+                        control={
+                          <Checkbox
+                            checked={ isEpsOverallChecked }
+                            indeterminate={ isEpsIndeterminate }
+                            onChange={ handleMultiFilterToggle('episode_id') }
+                          />
+                        }
+                      />
+                    </Stack>
+                  </FormLabel>
                   <FormGroup>
                     {
                       EP_OPTIONS.map((epOption) => {
@@ -185,3 +228,4 @@ function AdvancedFilter({ filters, onFilterChange }: AdvancedFilterProps) {
 }
 
 export default memo(AdvancedFilter);
+

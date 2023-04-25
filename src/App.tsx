@@ -1,32 +1,12 @@
 import './App.css';
 import { Box, Divider, List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
-import AdvancedFilter, { FilterValue } from './Filter';
+import AdvancedFilter, { EP_OPTIONS, FilterValue, PRODUCER_OPTIONS } from './Filter';
 import useFetch from './useFetch';
-
-export const PRODUCER_OPTIONS = ["Gary Kurtz, Rick McCallum", "Howard G. Kazanjian, George Lucas, Rick McCallum", "Rick McCallum"];
-export const EP_OPTIONS = ["1", "2", "3", "4", "5", "6"];
-
 
 function App() {
 
-  const [filterValue, setFilterValue] = useState<FilterValue>({
-    opening_crawl: '',
-    title: '',
-    episode_id: {
-      [EP_OPTIONS[0]]: true,
-      [EP_OPTIONS[1]]: true,
-      [EP_OPTIONS[2]]: true,
-      [EP_OPTIONS[3]]: true,
-      [EP_OPTIONS[4]]: true,
-      [EP_OPTIONS[5]]: true,
-    },
-    producer: {
-      [PRODUCER_OPTIONS[0]]: true,
-      [PRODUCER_OPTIONS[1]]: true,
-      [PRODUCER_OPTIONS[2]]: true,
-    }
-  });
+  const [filterValue, setFilterValue] = useState<FilterValue>(getDefaultFilters);
 
   const handleFilterChange = useCallback((filters: any) => {
     setFilterValue(filters);
@@ -135,6 +115,26 @@ function App() {
 }
 
 export default App;
+
+export const getDefaultFilters = () => {
+  return {
+    opening_crawl: '',
+    title: '',
+    episode_id: {
+      [EP_OPTIONS[0]]: true,
+      [EP_OPTIONS[1]]: true,
+      [EP_OPTIONS[2]]: true,
+      [EP_OPTIONS[3]]: true,
+      [EP_OPTIONS[4]]: true,
+      [EP_OPTIONS[5]]: true,
+    },
+    producer: {
+      [PRODUCER_OPTIONS[0]]: true,
+      [PRODUCER_OPTIONS[1]]: true,
+      [PRODUCER_OPTIONS[2]]: true,
+    }
+  };
+};
 
 
 export interface Film {
